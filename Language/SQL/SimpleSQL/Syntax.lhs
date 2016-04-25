@@ -70,6 +70,9 @@
 
 > import Data.Data
 > import Language.SQL.SimpleSQL.Dialect
+> import GHC.Generics
+> import Language.Sexp
+> import Data.Sexp
 
 > -- | Represents a value expression. This is used for the expressions
 > -- in select lists. It is also used for expressions in where, group
@@ -221,7 +224,7 @@ in other places
 >       -- ^ an odbc literal e.g. {d '2000-01-01'}
 >     | OdbcFunc ScalarExpr
 >       -- ^ an odbc function call e.g. {fn CHARACTER_LENGTH('test')}
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents an identifier name, which can be quoted or unquoted.
 > -- examples:
@@ -231,7 +234,7 @@ in other places
 > -- * `something` -> Name (Just ("`","`") "something"
 > -- * [ms] -> Name (Just ("[","]") "ms"
 > data Name = Name (Maybe (String,String)) String
->             deriving (Eq,Show,Read,Data,Typeable)
+>             deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents a type name, used in casts.
 > data TypeName
@@ -246,25 +249,25 @@ in other places
 >     | IntervalTypeName IntervalTypeField (Maybe IntervalTypeField)
 >     | ArrayTypeName TypeName (Maybe Integer)
 >     | MultisetTypeName TypeName
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data IntervalTypeField = Itf String (Maybe (Integer, Maybe Integer))
->                          deriving (Eq,Show,Read,Data,Typeable)
+>                          deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data Sign = Plus | Minus
->             deriving (Eq,Show,Read,Data,Typeable)
+>             deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data PrecMultiplier = PrecK | PrecM | PrecG | PrecT | PrecP
->                       deriving (Eq,Show,Read,Data,Typeable)
+>                       deriving (Eq,Show,Read,Data,Typeable,Generic)
 > data PrecUnits = PrecCharacters
 >                | PrecOctets
->                 deriving (Eq,Show,Read,Data,Typeable)
+>                 deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Used for 'expr in (scalar expression list)', and 'expr in
 > -- (subquery)' syntax.
 > data InPredValue = InList [ScalarExpr]
 >                  | InQueryExpr QueryExpr
->                    deriving (Eq,Show,Read,Data,Typeable)
+>                    deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 not sure if scalar subquery, exists and unique should be represented like this
 
@@ -276,34 +279,34 @@ not sure if scalar subquery, exists and unique should be represented like this
 >     | SqUnique
 >       -- | a scalar subquery
 >     | SqSq
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data CompPredQuantifier
 >     = CPAny
 >     | CPSome
 >     | CPAll
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents one field in an order by list.
 > data SortSpec = SortSpec ScalarExpr Direction NullsOrder
->                 deriving (Eq,Show,Read,Data,Typeable)
+>                 deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents 'nulls first' or 'nulls last' in an order by clause.
 > data NullsOrder = NullsOrderDefault
 >                 | NullsFirst
 >                 | NullsLast
->                   deriving (Eq,Show,Read,Data,Typeable)
+>                   deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents the frame clause of a window
 > -- this can be [range | rows] frame_start
 > -- or [range | rows] between frame_start and frame_end
 > data Frame = FrameFrom FrameRows FramePos
 >            | FrameBetween FrameRows FramePos FramePos
->              deriving (Eq,Show,Read,Data,Typeable)
+>              deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents whether a window frame clause is over rows or ranges.
 > data FrameRows = FrameRows | FrameRange
->                  deriving (Eq,Show,Read,Data,Typeable)
+>                  deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | represents the start or end of a frame
 > data FramePos = UnboundedPreceding
@@ -311,7 +314,7 @@ not sure if scalar subquery, exists and unique should be represented like this
 >               | Current
 >               | Following ScalarExpr
 >               | UnboundedFollowing
->                 deriving (Eq,Show,Read,Data,Typeable)
+>                 deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 
 > -- | the type of an odbc literal (e.g. {d '2000-01-01'}),
@@ -319,7 +322,7 @@ not sure if scalar subquery, exists and unique should be represented like this
 > data OdbcLiteralType = OLDate
 >                      | OLTime
 >                      | OLTimestamp
->                        deriving (Eq,Show,Read,Data,Typeable)
+>                        deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 
 > -- | Represents a query expression, which can be:
@@ -367,7 +370,7 @@ This would make some things a bit cleaner?
 >     | Values [[ScalarExpr]]
 >     | Table [Name]
 >     | QEComment [Comment] QueryExpr
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable, Generic)
 
 TODO: add queryexpr parens to deal with e.g.
 (select 1 union select 2) union select 3
@@ -401,14 +404,14 @@ I'm not sure if this is valid syntax or not.
 > -- | Represents the Distinct or All keywords, which can be used
 > -- before a select list, in an aggregate/window function
 > -- application, or in a query expression set operator.
-> data SetQuantifier = SQDefault | Distinct | All deriving (Eq,Show,Read,Data,Typeable)
+> data SetQuantifier = SQDefault | Distinct | All deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | The direction for a column in order by.
-> data Direction = DirDefault | Asc | Desc deriving (Eq,Show,Read,Data,Typeable)
+> data Direction = DirDefault | Asc | Desc deriving (Eq,Show,Read,Data,Typeable,Generic)
 > -- | Query expression set operators.
-> data SetOperatorName = Union | Except | Intersect deriving (Eq,Show,Read,Data,Typeable)
+> data SetOperatorName = Union | Except | Intersect deriving (Eq,Show,Read,Data,Typeable,Generic)
 > -- | Corresponding, an option for the set operators.
-> data Corresponding = Corresponding | Respectively deriving (Eq,Show,Read,Data,Typeable)
+> data Corresponding = Corresponding | Respectively deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents an item in a group by clause.
 > data GroupingExpr
@@ -417,7 +420,7 @@ I'm not sure if this is valid syntax or not.
 >     | Rollup [GroupingExpr]
 >     | GroupingSets [GroupingExpr]
 >     | SimpleGroup ScalarExpr
->       deriving (Eq,Show,Read,Data,Typeable)
+>       deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents a entry in the csv of tables in the from clause.
 > data TableRef = -- | from t / from s.t
@@ -436,22 +439,22 @@ I'm not sure if this is valid syntax or not.
 >               | TRLateral TableRef
 >                 -- | ODBC {oj t1 left outer join t2 on expr} syntax
 >               | TROdbc TableRef
->                 deriving (Eq,Show,Read,Data,Typeable)
+>                 deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Represents an alias for a table valued expression, used in with
 > -- queries and in from alias, e.g. select a from t u, select a from t u(b),
 > -- with a(c) as select 1, select * from a.
 > data Alias = Alias Name (Maybe [Name])
->              deriving (Eq,Show,Read,Data,Typeable)
+>              deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | The type of a join.
 > data JoinType = JInner | JLeft | JRight | JFull | JCross
->                 deriving (Eq,Show,Read,Data,Typeable)
+>                 deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | The join condition.
 > data JoinCondition = JoinOn ScalarExpr -- ^ on expr
 >                    | JoinUsing [Name] -- ^ using (column list)
->                      deriving (Eq,Show,Read,Data,Typeable)
+>                      deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 ---------------------------
 
@@ -538,45 +541,45 @@ I'm not sure if this is valid syntax or not.
 >   | SetTransform
 >   | SetCollation -}
 >   | StatementComment [Comment]
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data DropBehaviour =
 >     Restrict
 >   | Cascade
 >   | DefaultDropBehaviour
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data IdentityRestart =
 >     ContinueIdentity
 >   | RestartIdentity
 >   | DefaultIdentityRestart
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data InsertSource =
 >     InsertQuery QueryExpr
 >   | DefaultInsertValues
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data SetClause =
 >     Set [Name] ScalarExpr
 >   | SetMultiple [[Name]] [ScalarExpr]
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data TableElement =
 >     TableColumnDef ColumnDef
 >   | TableConstraintDef (Maybe [Name]) TableConstraint
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ColumnDef = ColumnDef Name TypeName
 >        (Maybe DefaultClause)
 >        [ColConstraintDef]
 >        -- (Maybe CollateClause)
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ColConstraintDef =
 >     ColConstraintDef (Maybe [Name]) ColConstraint
 >       -- (Maybe [ConstraintCharacteristics])
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ColConstraint =
 >     ColNotNullConstraint
@@ -587,7 +590,7 @@ I'm not sure if this is valid syntax or not.
 >        ReferentialAction
 >        ReferentialAction
 >   | ColCheckConstraint ScalarExpr
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data TableConstraint =
 >     TableUniqueConstraint [Name]
@@ -597,7 +600,7 @@ I'm not sure if this is valid syntax or not.
 >        ReferentialAction
 >        ReferentialAction
 >   | TableCheckConstraint ScalarExpr
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 
 > data ReferenceMatch =
@@ -605,7 +608,7 @@ I'm not sure if this is valid syntax or not.
 >   | MatchFull
 >   | MatchPartial
 >   | MatchSimple
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ReferentialAction =
 >     DefaultReferentialAction
@@ -614,7 +617,7 @@ I'm not sure if this is valid syntax or not.
 >   | RefSetDefault
 >   | RefRestrict
 >   | RefNoAction
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data AlterTableAction =
 >     AddColumnDef ColumnDef
@@ -630,46 +633,46 @@ I'm not sure if this is valid syntax or not.
 >   | AddTableConstraintDef (Maybe [Name]) TableConstraint
 >   --  | AlterTableConstraintDef
 >   | DropTableConstraintDef [Name] DropBehaviour
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > {-data ConstraintCharacteristics =
 >     ConstraintCharacteristics
 >         ConstraintCheckTime
 >         Deferrable
 >         ConstraintEnforcement
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ConstraintCheckTime =
 >     DefaultConstraintCheckTime
 >   | InitiallyDeferred
 >   | InitiallyImmeditate
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data Deferrable =
 >     DefaultDefferable
 >   | Deferrable
 >   | NotDeferrable
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data ConstraintEnforcement =
 >     DefaultConstraintEnforcement
 >   | Enforced
 >   | NotEnforced
->     deriving (Eq,Show,Read,Data,Typeable) -}
+>     deriving (Eq,Show,Read,Data,Typeable,Generic) -}
 
 > {-data TableConstraintDef
->     deriving (Eq,Show,Read,Data,Typeable) -}
+>     deriving (Eq,Show,Read,Data,Typeable,Generic) -}
 
 > data DefaultClause =
 >      DefaultClause ScalarExpr
 >    | IdentityColumnSpec IdentityWhen [SequenceGeneratorOption]
 >    | GenerationClause ScalarExpr
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data IdentityWhen =
 >     GeneratedAlways
 >   | GeneratedByDefault
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data SequenceGeneratorOption =
 >     SGODataType TypeName
@@ -682,33 +685,33 @@ I'm not sure if this is valid syntax or not.
 >   | SGONoMinValue
 >   | SGOCycle
 >   | SGONoCycle
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data CheckOption =
 >     DefaultCheckOption
 >   | CascadedCheckOption
 >   | LocalCheckOption
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data AlterDomainAction =
 >     ADSetDefault ScalarExpr
 >   | ADDropDefault
 >   | ADAddConstraint (Maybe [Name]) ScalarExpr
 >   | ADDropConstraint [Name]
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 
 > data AdminOption = WithAdminOption | WithoutAdminOption
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data GrantOption = WithGrantOption | WithoutGrantOption
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data AdminOptionFor = AdminOptionFor | NoAdminOptionFor
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data GrantOptionFor = GrantOptionFor | NoGrantOptionFor
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > data PrivilegeObject =
 >       PrivTable [Name]
@@ -716,7 +719,7 @@ I'm not sure if this is valid syntax or not.
 >     | PrivType [Name]
 >     | PrivSequence [Name]
 >     | PrivFunction [Name]
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable, Generic)
 
 > data PrivilegeAction =
 >       PrivAll
@@ -728,10 +731,11 @@ I'm not sure if this is valid syntax or not.
 >     | PrivUsage
 >     | PrivTrigger
 >     | PrivExecute
->     deriving (Eq,Show,Read,Data,Typeable)
+>     deriving (Eq,Show,Read,Data,Typeable, Generic)
 
 > -- | Comment. Useful when generating SQL code programmatically. The
 > -- parser doesn't produce these.
 > data Comment = BlockComment String
->                deriving (Eq,Show,Read,Data,Typeable)
+>                deriving (Eq,Show,Read,Data,Typeable,Generic)
 
+> instance Sexpable QueryExpr
