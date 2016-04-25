@@ -731,11 +731,61 @@ I'm not sure if this is valid syntax or not.
 >     | PrivUsage
 >     | PrivTrigger
 >     | PrivExecute
->     deriving (Eq,Show,Read,Data,Typeable, Generic)
+>     deriving (Eq,Show,Read,Data,Typeable,Generic)
 
 > -- | Comment. Useful when generating SQL code programmatically. The
 > -- parser doesn't produce these.
 > data Comment = BlockComment String
 >                deriving (Eq,Show,Read,Data,Typeable,Generic)
 
+> instance Sexpable Name
+> instance Sexpable IntervalTypeField
+> instance Sexpable Sign
+> instance Sexpable PrecMultiplier
+> instance Sexpable PrecUnits
+> instance Sexpable InPredValue
+> instance Sexpable SortSpec
+> instance Sexpable NullsOrder
+> instance Sexpable Frame
+> instance Sexpable FrameRows
+> instance Sexpable FramePos
+> instance Sexpable OdbcLiteralType
+> instance Sexpable SetQuantifier
+> instance Sexpable Direction
+> instance Sexpable SetOperatorName
+> instance Sexpable Corresponding
+> instance Sexpable TableRef
+> instance Sexpable Alias
+> instance Sexpable JoinType
+> instance Sexpable JoinCondition
+> instance Sexpable Statement
+> instance Sexpable DropBehaviour
+> instance Sexpable IdentityRestart
+> instance Sexpable InsertSource
+> instance Sexpable SetClause
+> instance Sexpable TableElement
+> instance Sexpable ColumnDef
+> instance Sexpable ColConstraintDef
+> instance Sexpable ColConstraint
+> instance Sexpable TableConstraint
+> instance Sexpable ReferenceMatch
+> instance Sexpable ReferentialAction
+> instance Sexpable AlterTableAction
+> instance Sexpable DefaultClause
+> instance Sexpable IdentityWhen
+> instance Sexpable SequenceGeneratorOption
+> instance Sexpable CheckOption
+> instance Sexpable AlterDomainAction
+> instance Sexpable AdminOption
+> instance Sexpable GrantOption
+> instance Sexpable AdminOptionFor
+> instance Sexpable GrantOptionFor
+> instance Sexpable PrivilegeObject
+> instance Sexpable PrivilegeAction
+> instance Sexpable Comment
+> instance Sexpable ScalarExpr
+> instance Sexpable CompPredQuantifier
 > instance Sexpable QueryExpr
+> instance Sexpable GroupingExpr
+> instance Sexpable SubQueryExprType
+> instance Sexpable TypeName
