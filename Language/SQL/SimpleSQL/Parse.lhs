@@ -783,6 +783,7 @@ all the scalar expressions which start with an identifier
 >                            ,"stddev_pop"
 >                            ,"stddev_samp"
 >                            ,"sum"
+>                            ,"unnest"
 >                            ,"upper"
 >                            ,"var_pop"
 >                            ,"var_samp"
