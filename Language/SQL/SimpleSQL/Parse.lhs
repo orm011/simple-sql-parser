@@ -1173,6 +1173,7 @@ messages, but both of these are too important.
 >         ,[binaryKeyword "overlaps" E.AssocNone]
 
 >         ,[binaryKeyword "like" E.AssocNone
+>          ,binaryKeyword "ilike" E.AssocNone
 >          -- have to use try with inSuffix because of a conflict
 >          -- with 'in' in position function, and not between
 >          -- between also has a try in it to deal with 'not'
@@ -2337,6 +2338,7 @@ not, leave them unreserved for now
 >     ,"hold"
 >     --,"hour"
 >     ,"identity"
+>     ,"ilike"
 >     ,"in"
 >     ,"indicator"
 >     ,"inner"
