@@ -43,7 +43,8 @@ library
                        parsec >=3.1 && <3.2,
                        mtl >=2.1 && <2.3,
                        pretty >= 1.1 && < 1.2,
-                       sexp==0.7
+                       sexp==0.7,
+                       hashable==1.2.2.0
   -- hs-source-dirs:
   default-language:    Haskell2010
   ghc-options:         -Wall -XDeriveGeneric
