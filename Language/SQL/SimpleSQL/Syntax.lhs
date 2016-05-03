@@ -1,6 +1,7 @@
 
 > -- | The AST for SQL.
 > {-# LANGUAGE DeriveDataTypeable #-}
+> {-# LANGUAGE DeriveGeneric #-}
 > module Language.SQL.SimpleSQL.Syntax
 >     (-- * Scalar expressions
 >      ScalarExpr(..)
@@ -72,8 +73,8 @@
 > import Language.SQL.SimpleSQL.Dialect
 > import GHC.Generics
 > import Language.Sexp
-> import Data.Sexp
-> import Data.Hashable
+> import Data.Sexp ()
+> import Data.Hashable 
 
 > -- | Represents a value expression. This is used for the expressions
 > -- in select lists. It is also used for expressions in where, group
