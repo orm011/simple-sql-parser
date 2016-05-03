@@ -1,7 +1,6 @@
 
 > -- | The AST for SQL.
-> {-# LANGUAGE DeriveDataTypeable #-}
-> {-# LANGUAGE DeriveGeneric #-}
+> {-# LANGUAGE DeriveDataTypeable, DeriveGeneric #-}
 > module Language.SQL.SimpleSQL.Syntax
 >     (-- * Scalar expressions
 >      ScalarExpr(..)
@@ -74,7 +73,8 @@
 > import GHC.Generics
 > import Language.Sexp
 > import Data.Sexp ()
-> import Data.Hashable 
+> import Data.Hashable
+> import Control.DeepSeq
 
 > -- | Represents a value expression. This is used for the expressions
 > -- in select lists. It is also used for expressions in where, group
@@ -844,3 +844,56 @@ I'm not sure if this is valid syntax or not.
 > instance Hashable GroupingExpr
 > instance Hashable SubQueryExprType
 > instance Hashable TypeName
+
+
+> instance NFData Name
+> instance NFData IntervalTypeField
+> instance NFData Sign
+> instance NFData PrecMultiplier
+> instance NFData PrecUnits
+> instance NFData InPredValue
+> instance NFData SortSpec
+> instance NFData NullsOrder
+> instance NFData Frame
+> instance NFData FrameRows
+> instance NFData FramePos
+> instance NFData OdbcLiteralType
+> instance NFData SetQuantifier
+> instance NFData Direction
+> instance NFData SetOperatorName
+> instance NFData Corresponding
+> instance NFData TableRef
+> instance NFData Alias
+> instance NFData JoinType
+> instance NFData JoinCondition
+> instance NFData Statement
+> instance NFData DropBehaviour
+> instance NFData IdentityRestart
+> instance NFData InsertSource
+> instance NFData SetClause
+> instance NFData TableElement
+> instance NFData ColumnDef
+> instance NFData ColConstraintDef
+> instance NFData ColConstraint
+> instance NFData TableConstraint
+> instance NFData ReferenceMatch
+> instance NFData ReferentialAction
+> instance NFData AlterTableAction
+> instance NFData DefaultClause
+> instance NFData IdentityWhen
+> instance NFData SequenceGeneratorOption
+> instance NFData CheckOption
+> instance NFData AlterDomainAction
+> instance NFData AdminOption
+> instance NFData GrantOption
+> instance NFData AdminOptionFor
+> instance NFData GrantOptionFor
+> instance NFData PrivilegeObject
+> instance NFData PrivilegeAction
+> instance NFData Comment
+> instance NFData ScalarExpr
+> instance NFData CompPredQuantifier
+> instance NFData QueryExpr
+> instance NFData GroupingExpr
+> instance NFData SubQueryExprType
+> instance NFData TypeName

@@ -1,4 +1,5 @@
 
+> {-# LANGUAGE DeriveDataTypeable, DeriveGeneric #-}
 > -- | helpers to work with parsec errors more nicely
 > module Language.SQL.SimpleSQL.Errors
 >     (ParseError(..)
@@ -7,6 +8,10 @@
 >     ) where
 
 > import Text.Parsec (sourceColumn,sourceLine,sourceName,errorPos)
+> import GHC.Generics
+> import Data.Hashable
+> import Control.DeepSeq
+
 > import qualified Text.Parsec as P (ParseError)
 
 > -- | Type to represent parse errors.
@@ -20,7 +25,9 @@
 >                   ,peFormattedError :: String
 >                    -- ^ formatted error with the position, error
 >                    -- message and source context
->                   } deriving (Eq,Show)
+>                   } deriving (Eq,Show,Ord,Generic)
+> instance NFData ParseError
+> instance Hashable ParseError
 
 > convParseError :: String -> P.ParseError -> ParseError
 > convParseError src e =
